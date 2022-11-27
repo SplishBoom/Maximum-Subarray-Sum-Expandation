@@ -5,6 +5,9 @@ import  argparse
 import  timeit
 import pandas as pd
 import matplotlib.pyplot as plt
+import time
+import keyboard
+import os
 
 # Method that simulates the algorithms. For given repeat times it repeats and measures the average time of n repeats.
 # @param int N: The number of elements in the array.
@@ -84,9 +87,62 @@ def simulate(N, BORDER, REPEAT) :
             )
         )
 
-def saveToFile(data, fileName):
+def saveToFile(data, fileName, save_to_file:bool):
     
-    
+    if save_to_file :
+        dataFrameColumns = ["Algrotihm", "Complexity", "Time Elapsed", "Array Size", "Start Index", "End Index", "Maximum Sum"]
+        dataFrame = pd.DataFrame(columns = dataFrameColumns)
+
+        for currentTuple in data :
+            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Brute Force", "O(n^2)", currentTuple[1][3], currentTuple[0], currentTuple[1][0][0], currentTuple[1][0][1], currentTuple[1][0][2]]], columns = dataFrameColumns)], ignore_index = True)
+            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Divide & Conquer", "O(nlogn)", currentTuple[1][4], currentTuple[0], currentTuple[1][1][0], currentTuple[1][1][1], currentTuple[1][1][2]]], columns = dataFrameColumns)], ignore_index = True)
+            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Kadane", "O(n)", currentTuple[1][5], currentTuple[0], currentTuple[1][2][0], currentTuple[1][2][1], currentTuple[1][2][2]]], columns = dataFrameColumns)], ignore_index = True)
+
+        path = os.path.join("data-export", fileName)
+        path = os.path.abspath(path)
+        
+        dataFrame.to_excel(path, index = False)
+        
+        return path
+    else :
+        print("Not saving to file")
+        return "No Path"
+
+# Method that plots the results.
+# @param dict data: The results of the simulation.
+# @param str fileName: The name of the file to save the results to.
+# @param bool plotResults: If the program should plot the results.
+# @return str path: The path to the output file.
+def plotResults(data, fileName, plot_results:bool) -> str :
+
+    if plot_results :
+        x   = []
+        yBF = []
+        yDC = []
+        yKD = []
+
+        for currentTuple in data :
+            x.append(currentTuple[0])
+            yBF.append(currentTuple[1][3])
+            yDC.append(currentTuple[1][4])
+            yKD.append(currentTuple[1][5])
+
+        plt.plot(x, yBF, label = "Brute Force - O(n^2)")
+        plt.plot(x, yDC, label = "Divide & Conquer - O(nlogn)")
+        plt.plot(x, yKD, label = "Kadane - O(n)")
+        plt.xlabel("Number of elements in the array")
+        plt.ylabel("Time elapsed (in microseconds)")
+        plt.tight_layout()
+        
+        plt.legend()
+        path = os.path.join("data-export", fileName)
+        path = os.path.abspath(path)
+        plt.savefig(path)
+
+        return path
+    else :
+        print("Not plotting results")
+        return "No Path"
 
 # Main Method, that runs the program according to the given arguments.
 # @param int N: The number of elements in the array.
@@ -96,20 +152,27 @@ def saveToFile(data, fileName):
 # @param bool plotResults: If the program should plot the results.
 # @param bool generateReport: If the program should generate a report.
 # @return None
-def main(N:int, BORDER:int, REPEAT:int, continuouslyGenerate:bool, savetoFile:bool, plotResults:bool, generateReport:bool) -> None :
-
-    if not continuouslyGenerate :
+def main(N:int, BORDER:int, REPEAT:int, continuously_generate:bool, save_to_file:bool, plot_results:bool) -> None :
+    
+    if not continuously_generate :
         data = [simulate(N,BORDER,REPEAT)]
     else :
         data = []
         for n in range(1, N + 1) :
+            print("Generating test case for n = " + str(n))
             data.append(simulate(n,BORDER,REPEAT))
 
-    if savetoFile :
-        saveToFile(data, "results.xlsx")
-    else :
-        print(data[0], " ...")
+            if keyboard.is_pressed("ESC") and keyboard.is_pressed("C") :
+                print("User stopped generating test cases. Program will now continue by results.")
+                break
 
+
+    dataPath = saveToFile(data, "results.xlsx", save_to_file)
+    
+    plotPath = plotResults(data, "results.png", plot_results)
+
+    print("Results saved to: " + dataPath)
+    print("Plot saved to: " + plotPath)
 
 # Client Driver        
 if __name__ == "__main__":
@@ -123,17 +186,15 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--continuously-generate", type=int, help="If this flag is set, the script will generate test cases continuously from 1 to N.", required=False, default=False)
     parser.add_argument("-s", "--save-to-file", type=int, help="If this flag is set, the results will be saved to a file.", required=False, default=False)
     parser.add_argument("-p", "--plot-results", type=int, help="If this flag is set, the results will be plotted.", required=False, default=False)
-    parser.add_argument("-r", "--generate-report", type=int, help="If this flag is set, the results will be reported.", required=False, default=False)
     args = parser.parse_args()
 
     N                       = args.number_of_elements
     BORDER                  = args.border
     REPEAT                  = args.repeat 
-    continuouslyGenerate    = bool(args.continuously_generate)
-    savetoFile             = bool(args.save_to_file)
-    plotResults             = bool(args.plot_results)
-    generateReport          = bool(args.generate_report)
+    continuously_generate   = bool(args.continuously_generate)
+    save_to_file            = bool(args.save_to_file)
+    plot_results            = bool(args.plot_results)
 
-    main(N, BORDER, REPEAT, continuouslyGenerate, savetoFile, plotResults, generateReport)
+    main(N, BORDER, REPEAT, continuously_generate, save_to_file, plot_results)
 
     safeStop()
