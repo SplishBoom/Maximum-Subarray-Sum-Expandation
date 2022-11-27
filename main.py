@@ -1,6 +1,4 @@
-from algorithms import brute_force as bf
-from algorithms import divide_and_conquer as dc
-from algorithms import kadane as kd
+from algorithms import bf, dc, kd
 
 import random
 
@@ -24,15 +22,15 @@ def main(N) :
     testArray = generateTestArray(N)
 
     startForBruteForce = timeit.default_timer()
-    bruteForceResult = bf.solve(testArray)
+    bruteForceResult = bf(testArray)
     endForBruteForce = timeit.default_timer()
 
     startForDivideAndConquer = timeit.default_timer()
-    divideAndConquerResult = dc.solve(testArray)
+    divideAndConquerResult = dc(testArray)
     endForDivideAndConquer = timeit.default_timer()
 
     startForKadane = timeit.default_timer()
-    kadaneResult = kd.solve(testArray)
+    kadaneResult = kd(testArray)
     endForKadane = timeit.default_timer()
 
     bfTime = (round((endForBruteForce - startForBruteForce) * 10 ** 6, 3))
