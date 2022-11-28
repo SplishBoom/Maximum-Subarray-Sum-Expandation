@@ -1,12 +1,12 @@
 from    algorithms  import bf, dc, kd
 from    utils       import generateTestArray
 from    utils       import safeStart, safeStop
-import  argparse
-import  timeit
-import pandas as pd
-import matplotlib.pyplot as plt
-import time
+import matplotlib.pyplot    as plt
+import pandas               as pd
+import argparse
 import keyboard
+import timeit
+import json
 import os
 
 # Method that simulates the algorithms. For given repeat times it repeats and measures the average time of n repeats.
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     safeStart()
 
     parser = argparse.ArgumentParser(description="This script is used to compare the performance of the brute force, divide and conquer and Kadane's algorithms.")
-    parser.add_argument("-n", "--number-of-elements", type=int, help="The number of elements in the array.", required=True)
+    parser.add_argument("-n", "--number-of-elements", type=int, help="The number of elements in the array.", required=False)
     parser.add_argument("-b", "--border", type=int, help="The borders of the elements in the array.", default=100)
     parser.add_argument("-re", "--repeat", type=int, help="The number of times to repeat a simulation.", default=1)
     parser.add_argument("-c", "--continuously-generate", type=int, help="If this flag is set, the script will generate test cases continuously from 1 to N.", required=False, default=False)
@@ -194,6 +194,18 @@ if __name__ == "__main__":
     continuously_generate   = bool(args.continuously_generate)
     save_to_file            = bool(args.save_to_file)
     plot_results            = bool(args.plot_results)
+
+    configPath = os.path.abspath(os.path.join("utils", "run_config.json"))
+    if N == None :
+        with open(configPath, "r") as configFile :
+            config = json.load(configFile)
+
+        N                       = config["N"]
+        BORDER                  = config["BORDER"]
+        REPEAT                  = config["REPEAT"]
+        continuously_generate   = config["continuously_generate"]
+        save_to_file            = config["save_to_file"]
+        plot_results            = config["plot_results"]
 
     main(N, BORDER, REPEAT, continuously_generate, save_to_file, plot_results)
 
