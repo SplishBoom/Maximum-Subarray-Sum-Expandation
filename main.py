@@ -1,6 +1,6 @@
-from    algorithms  import bf, dc, kd
-from    utils       import generateTestArray
-from    utils       import safeStart, safeStop
+from    algorithms  import  bf, dc, kd
+from    utils       import  generateTestArray
+from    utils       import  safeStart, safeStop
 import matplotlib.pyplot    as plt
 import pandas               as pd
 import argparse
@@ -14,7 +14,7 @@ import os
 # @param int BORDER: The borders of the elements in the array.
 # @param int REPEAT: The number of repeats.
 # @return dict: The results of the simulation.
-def simulate(N, BORDER, REPEAT) :
+def simulate(N:int, BORDER:int, REPEAT:int) -> tuple :
 
     testArray = generateTestArray(N, BORDER)
 
@@ -36,32 +36,18 @@ def simulate(N, BORDER, REPEAT) :
         endTimeForKD = timeit.default_timer()
         KDtime = (round((endTimeForKD - startTimeForKD) * 10 ** 6, 3))
 
-        results = (
-            BFResult,
-            DCResult,
-            KDResult,
-            BFTime,
-            DCtime,
-            KDtime
-        )
+        results = (BFResult, DCResult, KDResult, BFTime, DCtime, KDtime)
         
         data.append(results)
 
     if (REPEAT == 1) :
-        return (
-            N,
-            data[0]
-        )
+        return (N, data[0])
     else :
-
         for currentTuple in data :
             for otherTuple in data :
                 if (currentTuple[:3] != otherTuple[:3]) :
                     print("ERROR: Results are not the same!")
-                    return (
-                        N,
-                        data[0]
-                    )
+                    return (N, data[0])
         
         BFTime = 0
         DCtime = 0
@@ -75,19 +61,14 @@ def simulate(N, BORDER, REPEAT) :
         DCtime = DCtime / REPEAT
         KDtime = KDtime / REPEAT
 
-        return (
-            N,
-            (
-                data[0][0],
-                data[0][1],
-                data[0][2],
-                BFTime,
-                DCtime,
-                KDtime
-            )
-        )
+        return (N, (data[0][0], data[0][1], data[0][2], BFTime, DCtime, KDtime))
 
-def saveToFile(data, fileName, save_to_file:bool):
+# Method that saves results to an excel/csv file.
+# @param list data: The data to save.
+# @param str fileName: The name of the file to save the results to.
+# @param bool save_to_file: If the program should save the results to a file.
+# @return str: The path to the file.
+def saveToFile(data, fileName, save_to_file:bool) -> str :
     
     if save_to_file :
         dataFrameColumns = ["Algrotihm", "Complexity", "Time Elapsed", "Array Size", "Start Index", "End Index", "Maximum Sum"]
@@ -144,6 +125,26 @@ def plotResults(data, fileName, plot_results:bool) -> str :
         print("Not plotting results")
         return "No Path"
 
+# Method, that prints the given tuple result.
+# @param tuple result: The result to print.
+def printResult(result) :
+
+    infoString = ("| The given array size is {}.".format(result[0]))
+    string1 = ("| Algorithm | {:^20} | that outputs as {:^15} | And the execution time (in miliseconds) is | {:^15} |".format("Brute Force", str(result[1][0]), str(result[1][3])))
+    string2 = ("| Algorithm | {:^20} | that outputs as {:^15} | And the execution time (in miliseconds) is | {:^15} |".format("Divide & Conquer", str(result[1][1]), str(result[1][4])))
+    string3 = ("| Algorithm | {:^20} | that outputs as {:^15} | And the execution time (in miliseconds) is | {:^15} |".format("Kadane", str(result[1][2]), str(result[1][5])))
+
+    maxLen = max(len(string1), len(string2), len(string3))
+    
+    print("\n" , "|","-" * maxLen)
+    print(infoString)
+    print("|","-" * maxLen)
+    print(string1)
+    print(string2)
+    print(string3)
+    print("|","-" * maxLen)
+
+
 # Main Method, that runs the program according to the given arguments.
 # @param int N: The number of elements in the array.
 # @param int BORDER: The borders of the elements in the array.
@@ -173,6 +174,8 @@ def main(N:int, BORDER:int, REPEAT:int, continuously_generate:bool, save_to_file
 
     print("Results saved to: " + dataPath)
     print("Plot saved to: " + plotPath)
+
+    printResult(data[-1])
 
 # Client Driver        
 if __name__ == "__main__":
