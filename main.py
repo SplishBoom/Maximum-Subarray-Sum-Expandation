@@ -114,7 +114,6 @@ def plotResults(data, fileName, plot_results:bool) -> str :
         plt.xlabel("Number of elements in the array")
         plt.ylabel("Time elapsed (in microseconds)")
         plt.tight_layout()
-        
         plt.legend()
         path = os.path.join("data-export", fileName)
         path = os.path.abspath(path)

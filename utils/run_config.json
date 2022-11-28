@@ -1,5 +1,5 @@
 {
-    "N" : 100000,
+    "N" : 10,
     "BORDER" : 100,
     "REPEAT" : 1,
     "continuously_generate" : false,
