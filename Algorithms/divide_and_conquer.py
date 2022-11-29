@@ -25,6 +25,9 @@ from math import inf
 # @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
 def _divide_and_conquer(array:list, low:int, high:int) -> tuple :
 
+    # this should be globally called. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    iterations = {"A":1, "B":10, "C":100}
+
     if low == high :
         return (
             low, 
@@ -70,9 +73,11 @@ def _divide_and_conquer(array:list, low:int, high:int) -> tuple :
     return (
         startIndex, 
         endIndex, 
-        maximumSum
+        maximumSum,
     )
 
 # Driver method.
 def solve(inputArray:list) -> tuple :
-    return _divide_and_conquer(inputArray, 0, len(inputArray)-1)
+    # read iterations globally add here
+    iterations = {"A":1, "B":10, "C":100}
+    return *_divide_and_conquer(inputArray, 0, len(inputArray)-1), iterations

@@ -23,6 +23,9 @@ from math import inf
 # @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
 def _brute_force(array:list) -> tuple :
 
+    # this should be globally called. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    iterations = {"A":1, "B":10, "C":100}
+
     maximumSum = -inf
     startIndex = 0
     endIndex   = 0
@@ -45,7 +48,8 @@ def _brute_force(array:list) -> tuple :
     return (
         startIndex, 
         endIndex, 
-        maximumSum
+        maximumSum,
+        iterations
     )
 
 # Driver method.

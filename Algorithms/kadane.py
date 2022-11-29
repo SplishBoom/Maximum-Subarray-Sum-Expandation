@@ -23,6 +23,9 @@ from math import inf
 # @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
 def _kadane(array:list) -> tuple :
 
+    # this should be globally called. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    iterations = {"A":1, "B":10, "C":100}
+
     currentMaxSum = 0
     maximumSum    = -inf
     startTrack    = 0
@@ -42,7 +45,8 @@ def _kadane(array:list) -> tuple :
     return (
         startIndex,
         endIndex,
-        maximumSum
+        maximumSum,
+        iterations
     )
 
 # Driver method.
