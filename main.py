@@ -5,174 +5,176 @@ import matplotlib.pyplot    as plt
 import pandas               as pd
 import argparse
 import keyboard
+import colorama
 import timeit
 import json
 import os
 
-# Method that simulates the algorithms. For given repeat times it repeats and measures the average time of n repeats.
-# @param int N: The number of elements in the array.
-# @param int BORDER: The borders of the elements in the array.
-# @param int REPEAT: The number of repeats.
-# @return dict: The results of the simulation.
-def simulate(N:int, BORDER:int, REPEAT:int) -> tuple :
+def execute(N:int) -> dict :
 
-    testArray = generateTestArray(N, BORDER)
+    testArray = generateTestArray(N)
+
+    startTimeForBF = timeit.default_timer()
+    BFResult = bf(testArray)
+    endTimeForBF = timeit.default_timer()
+    BFTime = (round((endTimeForBF - startTimeForBF) * 10 ** 6, 3))
+
+    startTimeForDC = timeit.default_timer()
+    DCResult = dc(testArray)
+    endTimeForDC = timeit.default_timer()
+    DCtime = (round((endTimeForDC - startTimeForDC) * 10 ** 6, 3))
+
+    startTimeForKD = timeit.default_timer()
+    KDResult = kd(testArray)
+    endTimeForKD = timeit.default_timer()
+    KDtime = (round((endTimeForKD - startTimeForKD) * 10 ** 6, 3))
+    
+    # if all results indexses and sum are equal then state is true
+    state = (BFResult[0] == DCResult[0] == KDResult[0]) and (BFResult[1] == DCResult[1] == KDResult[1]) and (BFResult[2] == DCResult[2] == KDResult[2])
+
+    results = {
+        "Array Size" : N,
+        "Test Array" : testArray,
+        "Simulate Correct" : state,
+
+        "BF Start Index" : BFResult[0],
+        "BF End Index" : BFResult[1],
+        "BF Sum" : BFResult[2],
+        "BF Time" : BFTime,
+        "BF Iterations" : BFResult[3],
+
+        "DC Start Index" : DCResult[0],
+        "DC End Index" : DCResult[1],
+        "DC Sum" : DCResult[2],
+        "DC Time" : DCtime,
+        "DC Iterations" : DCResult[3],
+
+        "KD Start Index" : KDResult[0],
+        "KD End Index" : KDResult[1],
+        "KD Sum" : KDResult[2],
+        "KD Time" : KDtime,
+        "KD Iterations" : KDResult[3]
+    }
+
+    return results
+
+
+def simulate(N:int, continuously_generate) :
+
+    stopperKeys = ["ESC", "C"]
 
     data = []
 
-    for i in range(REPEAT) :
-        startTimeForBF = timeit.default_timer()
-        BFResult = bf(testArray)
-        endTimeForBF = timeit.default_timer()
-        BFTime = (round((endTimeForBF - startTimeForBF) * 10 ** 6, 3))
-
-        startTimeForDC = timeit.default_timer()
-        DCResult = dc(testArray)
-        endTimeForDC = timeit.default_timer()
-        DCtime = (round((endTimeForDC - startTimeForDC) * 10 ** 6, 3))
-
-        startTimeForKD = timeit.default_timer()
-        KDResult = kd(testArray)
-        endTimeForKD = timeit.default_timer()
-        KDtime = (round((endTimeForKD - startTimeForKD) * 10 ** 6, 3))
-
-        results = (BFResult, DCResult, KDResult, BFTime, DCtime, KDtime)
-        
-        data.append(results)
-
-    if (REPEAT == 1) :
-        return (N, data[0])
-    else :
-        for currentTuple in data :
-            for otherTuple in data :
-                if (currentTuple[:3] != otherTuple[:3]) :
-                    print("ERROR: Results are not the same!")
-                    return (N, data[0])
-        
-        BFTime = 0
-        DCtime = 0
-        KDtime = 0
-        for currentTuple in data :
-            BFTime += currentTuple[3]
-            DCtime += currentTuple[4]
-            KDtime += currentTuple[5]
-
-        BFTime = BFTime / REPEAT
-        DCtime = DCtime / REPEAT
-        KDtime = KDtime / REPEAT
-
-        return (N, (data[0][0], data[0][1], data[0][2], BFTime, DCtime, KDtime))
-
-# Method that saves results to an excel/csv file.
-# @param list data: The data to save.
-# @param str fileName: The name of the file to save the results to.
-# @param bool save_to_file: If the program should save the results to a file.
-# @return str: The path to the file.
-def saveToFile(data, fileName, save_to_file:bool) -> str :
-    
-    if save_to_file :
-        dataFrameColumns = ["Algrotihm", "Complexity", "Time Elapsed", "Array Size", "Start Index", "End Index", "Maximum Sum"]
-        dataFrame = pd.DataFrame(columns = dataFrameColumns)
-
-        for currentTuple in data :
-            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Brute Force", "O(n^2)", currentTuple[1][3], currentTuple[0], currentTuple[1][0][0], currentTuple[1][0][1], currentTuple[1][0][2]]], columns = dataFrameColumns)], ignore_index = True)
-            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Divide & Conquer", "O(nlogn)", currentTuple[1][4], currentTuple[0], currentTuple[1][1][0], currentTuple[1][1][1], currentTuple[1][1][2]]], columns = dataFrameColumns)], ignore_index = True)
-            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Kadane", "O(n)", currentTuple[1][5], currentTuple[0], currentTuple[1][2][0], currentTuple[1][2][1], currentTuple[1][2][2]]], columns = dataFrameColumns)], ignore_index = True)
-
-        path = os.path.join("data-export", fileName)
-        path = os.path.abspath(path)
-        
-        dataFrame.to_excel(path, index = False)
-        
-        return path
-    else :
-        print("Not saving to file")
-        return "No Path"
-
-# Method that plots the results.
-# @param dict data: The results of the simulation.
-# @param str fileName: The name of the file to save the results to.
-# @param bool plotResults: If the program should plot the results.
-# @return str path: The path to the output file.
-def plotResults(data, fileName, plot_results:bool) -> str :
-
-    if plot_results :
-        x   = []
-        yBF = []
-        yDC = []
-        yKD = []
-
-        for currentTuple in data :
-            x.append(currentTuple[0])
-            yBF.append(currentTuple[1][3])
-            yDC.append(currentTuple[1][4])
-            yKD.append(currentTuple[1][5])
-
-        plt.plot(x, yBF, label = "Brute Force - O(n^2)")
-        plt.plot(x, yDC, label = "Divide & Conquer - O(nlogn)")
-        plt.plot(x, yKD, label = "Kadane - O(n)")
-        plt.xlabel("Number of elements in the array")
-        plt.ylabel("Time elapsed (in microseconds)")
-        plt.tight_layout()
-        plt.legend()
-        path = os.path.join("data-export", fileName)
-        path = os.path.abspath(path)
-        plt.savefig(path)
-
-        return path
-    else :
-        print("Not plotting results")
-        return "No Path"
-
-# Method, that prints the given tuple result.
-# @param tuple result: The result to print.
-def printResult(result) :
-
-    infoString = ("| The given array size is {}.".format(result[0]))
-    string1 = ("| Algorithm | {:^20} | that outputs as {:^15} | And the execution time (in miliseconds) is | {:^15} |".format("Brute Force", str(result[1][0]), str(result[1][3])))
-    string2 = ("| Algorithm | {:^20} | that outputs as {:^15} | And the execution time (in miliseconds) is | {:^15} |".format("Divide & Conquer", str(result[1][1]), str(result[1][4])))
-    string3 = ("| Algorithm | {:^20} | that outputs as {:^15} | And the execution time (in miliseconds) is | {:^15} |".format("Kadane", str(result[1][2]), str(result[1][5])))
-
-    maxLen = max(len(string1), len(string2), len(string3))
-    
-    print("\n" , "|","-" * maxLen)
-    print(infoString)
-    print("|","-" * maxLen)
-    print(string1)
-    print(string2)
-    print(string3)
-    print("|","-" * maxLen)
-
-
-# Main Method, that runs the program according to the given arguments.
-# @param int N: The number of elements in the array.
-# @param int BORDER: The borders of the elements in the array.
-# @param bool continuouslyGenerate: If the program should generate test cases continuously.
-# @param bool saveToExcel: If the program should save the results to an excel file.
-# @param bool plotResults: If the program should plot the results.
-# @param bool generateReport: If the program should generate a report.
-# @return None
-def main(N:int, BORDER:int, REPEAT:int, continuously_generate:bool, save_to_file:bool, plot_results:bool) -> None :
-    
     if not continuously_generate :
-        data = [simulate(N,BORDER,REPEAT)]
+        data.append(execute(N))
     else :
-        data = []
         for n in range(1, N + 1) :
-            print("Generating test case for n = " + str(n))
-            data.append(simulate(n,BORDER,REPEAT))
-
+            print("[\"{}\"+\"{}\"] to stop generation. || Generating test case by {}/{} ".format(str(stopperKeys[0]), str(stopperKeys[1]), str(n), str(N)))
+            data.append(execute(n))
             if keyboard.is_pressed("ESC") and keyboard.is_pressed("C") :
                 print("User stopped generating test cases. Program will now continue by results.")
                 break
 
-
-    dataPath = saveToFile(data, "results.xlsx", save_to_file)
+    return data
     
-    plotPath = plotResults(data, "results.png", plot_results)
+def saveToFile(data, fileName, save_to_file:bool) -> str :
+    
+    if not save_to_file :
+        return "User didn't want to save results to file. For -> \"{}\"".format(fileName)
 
-    print("Results saved to: " + dataPath)
-    print("Plot saved to: " + plotPath)
+    path = os.path.abspath(os.path.join("data-export", fileName))
+
+    dataFrameColumns = ["Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration"]
+
+    dataFrame = pd.DataFrame(columns=dataFrameColumns)
+
+    for result in data :
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([[ "Brute Force", "O(n^2)", result["BF Start Index"], result["BF End Index"], result["BF Sum"], result["BF Time"], result["BF Iterations"], max(result["BF Iterations"].values())]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([[ "Divide and Conquer", "O(nlogn)", result["DC Start Index"], result["DC End Index"], result["DC Sum"], result["DC Time"], result["DC Iterations"], max(result["DC Iterations"].values())]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([[ "Kadane's Algorithm", "O(n)", result["KD Start Index"], result["KD End Index"], result["KD Sum"], result["KD Time"], result["KD Iterations"], max(result["KD Iterations"].values())]], columns=dataFrameColumns)])
+
+    dataFrame.to_excel(path, index=False)
+
+    return "Results saved to file. For -> \"{}\"".format(path)
+
+
+def plotResults(data, fileName1, fileName2, plot_results:bool) -> str :
+    
+    if not plot_results :
+        return "User didn't want to plot results. For -> \"{}\" & \"{}\"".format(fileName1, fileName2)
+
+    path1 = os.path.abspath(os.path.join("data-export", fileName1))
+    path2 = os.path.abspath(os.path.join("data-export", fileName2))
+
+    # matplotlib plot for timeXsize
+    plt.figure(figsize=(10, 5))
+    plt.plot([result["Array Size"] for result in data], [result["BF Time"] for result in data], label="Brute Force")
+    plt.plot([result["Array Size"] for result in data], [result["DC Time"] for result in data], label="Divide and Conquer")
+    plt.plot([result["Array Size"] for result in data], [result["KD Time"] for result in data], label="Kadane's Algorithm")
+    plt.xlabel("Array Size")
+    plt.ylabel("Time Elapsed (microseconds)")
+    plt.title("Time Elapsed (microseconds) vs Array Size")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(path1)
+    
+    # matplotlib plot for iterationsXsize
+    plt.figure(figsize=(10, 5))
+    plt.plot([result["Array Size"] for result in data], [max(result["BF Iterations"].values()) for result in data], label="Brute Force")
+    plt.plot([result["Array Size"] for result in data], [max(result["DC Iterations"].values()) for result in data], label="Divide and Conquer")
+    plt.plot([result["Array Size"] for result in data], [max(result["KD Iterations"].values()) for result in data], label="Kadane's Algorithm")
+    plt.xlabel("Array Size")
+    plt.ylabel("Maximum Iteration")
+    plt.title("Maximum Iteration vs Array Size")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(path2)
+
+    return "Results plotted. For -> \"{}\" & \"{}\"".format(path1, path2)
+
+def printResult(result) :
+
+    if not result["Simulate Correct"] :
+        print(colorama.Fore.RED + "\nSimulation failed. Results are not equal." + colorama.Fore.RESET)
+    else :
+        print(colorama.Fore.GREEN + "{:^240}".format("Simulation success. Results are equal.") + colorama.Fore.RESET)
+
+    infoString1 = "The given array's size is {}. -> [{}, {}, {}, . . . {}]".format(str(result["Array Size"]), str(result["Test Array"][0]), str(result["Test Array"][1]), str(result["Test Array"][2]), str(result["Test Array"][-1]))
+    infoString2 = "The maximum subarray is between the indices {} and {} with a sum of {}.".format(str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]))
+
+    tableString = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed", "Iterations", "Maximum Iteration")
+
+    resultString1 = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Brute Force", "O(n^2)", str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]), str(result["BF Time"]), str(result["BF Iterations"]), str(max(result["BF Iterations"].values())))
+    resultString2 = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Divide and Conquer", "O(nlogn)", str(result["DC Start Index"]), str(result["DC End Index"]), str(result["DC Sum"]), str(result["DC Time"]), str(result["DC Iterations"]), str(max(result["DC Iterations"].values())))
+    resultString3 = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Kadane's Algorithm", "O(n)", str(result["KD Start Index"]), str(result["KD End Index"]), str(result["KD Sum"]), str(result["KD Time"]), str(result["KD Iterations"]), str(max(result["KD Iterations"].values())))
+
+    maxLength = max(len(infoString1), len(infoString2), len(tableString), len(resultString1), len(resultString2), len(resultString3))
+
+    tableParser = "-" * maxLength
+
+    print(colorama.Fore.WHITE, tableParser, colorama.Fore.RESET)
+    print(colorama.Fore.YELLOW, infoString1, colorama.Fore.RESET)
+    print(colorama.Fore.YELLOW, infoString2, colorama.Fore.RESET)
+    print(colorama.Fore.WHITE, tableParser, colorama.Fore.RESET)
+    print(colorama.Fore.BLUE, tableString, colorama.Fore.RESET)
+    print(colorama.Fore.WHITE, tableParser, colorama.Fore.RESET)
+    print(colorama.Fore.GREEN, resultString1, colorama.Fore.RESET)
+    print(colorama.Fore.GREEN, resultString2, colorama.Fore.RESET)
+    print(colorama.Fore.GREEN, resultString3, colorama.Fore.RESET)
+    print(colorama.Fore.WHITE, tableParser, colorama.Fore.RESET)
+
+    print()
+
+
+def main(N:int, continuously_generate:bool, save_to_file:bool, plot_results:bool) -> None :
+    
+    data = simulate(N, continuously_generate)
+
+    feedback1 = saveToFile(data, "results.xlsx", save_to_file)
+    feeedback2 = plotResults(data, "timeXsize_results.png", "iterationXsize_results.png", plot_results)
+
+    print(feedback1)
+    print(feeedback2)
 
     printResult(data[-1])
 
@@ -183,16 +185,12 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="This script is used to compare the performance of the brute force, divide and conquer and Kadane's algorithms.")
     parser.add_argument("-n", "--number-of-elements", type=int, help="The number of elements in the array.", required=False)
-    parser.add_argument("-b", "--border", type=int, help="The borders of the elements in the array.", default=100)
-    parser.add_argument("-re", "--repeat", type=int, help="The number of times to repeat a simulation.", default=1)
     parser.add_argument("-c", "--continuously-generate", type=int, help="If this flag is set, the script will generate test cases continuously from 1 to N.", required=False, default=False)
     parser.add_argument("-s", "--save-to-file", type=int, help="If this flag is set, the results will be saved to a file.", required=False, default=False)
     parser.add_argument("-p", "--plot-results", type=int, help="If this flag is set, the results will be plotted.", required=False, default=False)
     args = parser.parse_args()
 
     N                       = args.number_of_elements
-    BORDER                  = args.border
-    REPEAT                  = args.repeat 
     continuously_generate   = bool(args.continuously_generate)
     save_to_file            = bool(args.save_to_file)
     plot_results            = bool(args.plot_results)
@@ -201,14 +199,11 @@ if __name__ == "__main__":
     if N == None :
         with open(configPath, "r") as configFile :
             config = json.load(configFile)
-
         N                       = config["N"]
-        BORDER                  = config["BORDER"]
-        REPEAT                  = config["REPEAT"]
         continuously_generate   = config["continuously_generate"]
         save_to_file            = config["save_to_file"]
         plot_results            = config["plot_results"]
 
-    main(N, BORDER, REPEAT, continuously_generate, save_to_file, plot_results)
+    main(N, continuously_generate, save_to_file, plot_results)
 
     safeStop()
