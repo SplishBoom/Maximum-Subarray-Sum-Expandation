@@ -92,14 +92,14 @@ def saveToFile(data, fileName, save_to_file:bool) -> str :
 
     path = os.path.abspath(os.path.join("data-export", fileName))
 
-    dataFrameColumns = ["Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration"]
+    dataFrameColumns = ["Algorithm", "Array Size", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration"]
 
     dataFrame = pd.DataFrame(columns=dataFrameColumns)
 
     for result in data :
-        dataFrame = pd.concat([dataFrame, pd.DataFrame([[ "Brute Force", "O(n^2)", result["BF Start Index"], result["BF End Index"], result["BF Sum"], result["BF Time"], result["BF Iterations"], max(result["BF Iterations"].values())]], columns=dataFrameColumns)])
-        dataFrame = pd.concat([dataFrame, pd.DataFrame([[ "Divide and Conquer", "O(nlogn)", result["DC Start Index"], result["DC End Index"], result["DC Sum"], result["DC Time"], result["DC Iterations"], max(result["DC Iterations"].values())]], columns=dataFrameColumns)])
-        dataFrame = pd.concat([dataFrame, pd.DataFrame([[ "Kadane's Algorithm", "O(n)", result["KD Start Index"], result["KD End Index"], result["KD Sum"], result["KD Time"], result["KD Iterations"], max(result["KD Iterations"].values())]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Brute Force", result["Array Size"], "O(n^2)", result["BF Start Index"], result["BF End Index"], result["BF Sum"], result["BF Time"], result["BF Iterations"], max(result["BF Iterations"].values())]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Divide and Conquer", result["Array Size"], "O(nlogn)", result["DC Start Index"], result["DC End Index"], result["DC Sum"], result["DC Time"], result["DC Iterations"], max(result["DC Iterations"].values())]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Kadane", result["Array Size"], "O(n)", result["KD Start Index"], result["KD End Index"], result["KD Sum"], result["KD Time"], result["KD Iterations"], max(result["KD Iterations"].values())]], columns=dataFrameColumns)])
 
     dataFrame.to_excel(path, index=False)
 
