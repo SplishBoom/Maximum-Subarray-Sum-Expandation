@@ -1,4 +1,4 @@
-from    algorithms  import  bf, dc, kd
+from    algorithms  import  ClassBF, ClassDC, ClassKD
 from    utils       import  generateTestArray
 from    utils       import  safeStart, safeStop
 import matplotlib.pyplot    as plt
@@ -19,18 +19,21 @@ def execute(N:int) -> dict :
 
     testArray = generateTestArray(N)
 
+    bfObject = ClassBF()
     startTimeForBF = timeit.default_timer()
-    BFResult = bf(testArray)
+    BFResult = bfObject.solve(testArray)
     endTimeForBF = timeit.default_timer()
     BFTime = (round((endTimeForBF - startTimeForBF) * 10 ** 6, 3))
 
+    dcObject = ClassDC()
     startTimeForDC = timeit.default_timer()
-    DCResult = dc(testArray)
+    DCResult = dcObject.solve(testArray)
     endTimeForDC = timeit.default_timer()
     DCtime = (round((endTimeForDC - startTimeForDC) * 10 ** 6, 3))
 
+    kdObject = ClassKD()
     startTimeForKD = timeit.default_timer()
-    KDResult = kd(testArray)
+    KDResult = kdObject.solve(testArray)
     endTimeForKD = timeit.default_timer()
     KDtime = (round((endTimeForKD - startTimeForKD) * 10 ** 6, 3))
     
