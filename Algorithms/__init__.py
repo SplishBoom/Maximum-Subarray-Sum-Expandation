@@ -1,3 +1,3 @@
-from algorithms.brute_force import solve as bf
-from algorithms.divide_and_conquer import solve as dc
-from algorithms.kadane import solve as kd
+from algorithms.brute_force import ClassBruteForce as ClassBF
+from algorithms.divide_and_conquer import ClassDivideAndConquer as ClassDC
+from algorithms.kadane import ClassKadane as ClassKD

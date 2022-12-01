@@ -18,66 +18,73 @@
 
 from math import inf
 
-# Method that implements the divide and conquer algorithm.
-# @param list array: The array that will be used to find the subarray with the largest sum.
-# @param int low: The lower bound of the array.
-# @param int high: The upper bound of the array.
-# @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
-def _divide_and_conquer(array:list, low:int, high:int) -> tuple :
+class ClassDivideAndConquer :
 
-    # this should be globally called. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    iterations = {"A":1, "B":10, "C":100}
+    def __init__(self) -> None :
+        
+        self.iterations = {
+            "A":0,
+            "B":0,
+            "C":0,
+            "D":0,
+            "E":0,
+        }
 
-    if low == high :
+    # Method that implements the divide and conquer algorithm.
+    # @param list array: The array that will be used to find the subarray with the largest sum.
+    # @param int low: The lower bound of the array.
+    # @param int high: The upper bound of the array.
+    # @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
+    def _divide_and_conquer(self, array:list, low:int, high:int) -> tuple :
+
+        if low == high :
+            return (
+                low, 
+                high, 
+                array[low]
+            )
+
+        mid = (low+high) // 2
+
+        currentLowIndex = mid
+        currentSum      = 0
+        leftSum         = -inf
+        maxLeft         = mid
+        while (currentLowIndex >= low) :
+            currentSum += array[currentLowIndex]
+            if (currentSum > leftSum) :
+                leftSum = currentSum
+                maxLeft = currentLowIndex
+            currentLowIndex -= 1
+
+        currentRightIndex = mid+1
+        currentSum        = 0
+        rightSum          = -inf
+        maxRight          = mid+1
+        while (currentRightIndex <= high) :
+            currentSum += array[currentRightIndex]
+            if (currentSum > rightSum) :
+                rightSum = currentSum
+                maxRight = currentRightIndex
+            currentRightIndex += 1
+
+        leftLow , leftHigh , leftSumR  = self._divide_and_conquer(array, low, mid)
+        rightLow, rightHigh, rightSumR = self._divide_and_conquer(array, mid+1, high)    
+        crossLow, crossHigh, crossSumR = maxLeft, maxRight, leftSum+rightSum
+
+        if ( (leftSumR >= rightSumR) and (leftSumR >= crossSumR) ) :
+            startIndex, endIndex, maximumSum = leftLow, leftHigh, leftSumR
+        elif ( (rightSumR >= leftSumR) and (rightSumR >= crossSumR) ) :
+            startIndex, endIndex, maximumSum = rightLow, rightHigh, rightSumR
+        else:
+            startIndex, endIndex, maximumSum = crossLow, crossHigh, crossSumR
+
         return (
-            low, 
-            high, 
-            array[low]
+            startIndex, 
+            endIndex, 
+            maximumSum,
         )
 
-    mid = (low+high) // 2
-
-    currentLowIndex = mid
-    currentSum      = 0
-    leftSum         = -inf
-    maxLeft         = mid
-    while (currentLowIndex >= low) :
-        currentSum += array[currentLowIndex]
-        if (currentSum > leftSum) :
-            leftSum = currentSum
-            maxLeft = currentLowIndex
-        currentLowIndex -= 1
-
-    currentRightIndex = mid+1
-    currentSum        = 0
-    rightSum          = -inf
-    maxRight          = mid+1
-    while (currentRightIndex <= high) :
-        currentSum += array[currentRightIndex]
-        if (currentSum > rightSum) :
-            rightSum = currentSum
-            maxRight = currentRightIndex
-        currentRightIndex += 1
-
-    leftLow , leftHigh , leftSumR  = _divide_and_conquer(array, low, mid)
-    rightLow, rightHigh, rightSumR = _divide_and_conquer(array, mid+1, high)    
-    crossLow, crossHigh, crossSumR = maxLeft, maxRight, leftSum+rightSum
-
-    if ( (leftSumR >= rightSumR) and (leftSumR >= crossSumR) ) :
-        startIndex, endIndex, maximumSum = leftLow, leftHigh, leftSumR
-    elif ( (rightSumR >= leftSumR) and (rightSumR >= crossSumR) ) :
-        startIndex, endIndex, maximumSum = rightLow, rightHigh, rightSumR
-    else:
-        startIndex, endIndex, maximumSum = crossLow, crossHigh, crossSumR
-
-    return (
-        startIndex, 
-        endIndex, 
-        maximumSum,
-    )
-
-# Driver method.
-def solve(inputArray:list) -> tuple :
-    # read iterations globally add here
-    iterations = {"A":1, "B":10, "C":100}
-    return *_divide_and_conquer(inputArray, 0, len(inputArray)-1), iterations
+    # Driver method.
+    def solve(self, inputArray:list) -> tuple :
+        return *self._divide_and_conquer(inputArray, 0, len(inputArray)-1), self.iterations

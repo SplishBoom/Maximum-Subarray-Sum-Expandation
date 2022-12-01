@@ -18,37 +18,46 @@
 
 from math import inf
 
-# Method that implements Kadane's algorithm.
-# @param list array: The array that will be used to find the subarray with the largest sum.
-# @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
-def _kadane(array:list) -> tuple :
+class ClassKadane :
 
-    # this should be globally called. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    iterations = {"A":1, "B":10, "C":100}
+    def __init__(self) -> None :
 
-    currentMaxSum = 0
-    maximumSum    = -inf
-    startTrack    = 0
-    startIndex    = 0
-    endIndex      = 0
+        self.iterations = {
+            "A":0,
+            "B":0,
+            "C":0,
+            "D":0,
+            "E":0,
+        }
 
-    for currentIndex in range(len(array)) :
-        currentMaxSum += array[currentIndex]
-        if (maximumSum < currentMaxSum) :
-            maximumSum = currentMaxSum
-            startIndex = startTrack
-            endIndex = currentIndex
-        if (currentMaxSum < 0) :
-            currentMaxSum = 0
-            startTrack = currentIndex + 1
+    # Method that implements Kadane's algorithm.
+    # @param list array: The array that will be used to find the subarray with the largest sum.
+    # @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
+    def _kadane(self, array:list) -> tuple :
 
-    return (
-        startIndex,
-        endIndex,
-        maximumSum,
-        iterations
-    )
+        currentMaxSum = 0
+        maximumSum    = -inf
+        startTrack    = 0
+        startIndex    = 0
+        endIndex      = 0
 
-# Driver method.
-def solve(inputArray:list) -> tuple :
-    return _kadane(inputArray)
+        for currentIndex in range(len(array)) :
+            currentMaxSum += array[currentIndex]
+            if (maximumSum < currentMaxSum) :
+                maximumSum = currentMaxSum
+                startIndex = startTrack
+                endIndex = currentIndex
+            if (currentMaxSum < 0) :
+                currentMaxSum = 0
+                startTrack = currentIndex + 1
+
+        return (
+            startIndex,
+            endIndex,
+            maximumSum,
+            self.iterations
+        )
+
+    # Driver method.
+    def solve(self, inputArray:list) -> tuple :
+        return self._kadane(inputArray)

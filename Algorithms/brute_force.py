@@ -18,40 +18,49 @@
 
 from math import inf
 
-# Method that implements the naive algorithm.
-# @param list array: The array that will be used to find the subarray with the largest sum.
-# @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
-def _brute_force(array:list) -> tuple :
+class ClassBruteForce :
 
-    # this should be globally called. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    iterations = {"A":1, "B":10, "C":100}
+    def __init__(self) -> None :
 
-    maximumSum = -inf
-    startIndex = 0
-    endIndex   = 0
+        self.iterations = {
+            "A":0,
+            "B":0,
+            "C":0,
+            "D":0,
+            "E":0,
+        }
 
-    for currentIndex in range(len(array)) :
+    # Method that implements the naive algorithm.
+    # @param list array: The array that will be used to find the subarray with the largest sum.
+    # @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
+    def _brute_force(self, array:list) -> tuple :
 
-        currentSum = array[currentIndex]
-        if (currentSum > maximumSum) :
-            maximumSum = currentSum
-            startIndex = currentIndex
-            endIndex   = currentIndex
+        maximumSum = -inf
+        startIndex = 0
+        endIndex   = 0
 
-        for j in range(currentIndex+1, len(array)) :
-            currentSum += array[j]
+        for currentIndex in range(len(array)) :
+
+            currentSum = array[currentIndex]
             if (currentSum > maximumSum) :
                 maximumSum = currentSum
                 startIndex = currentIndex
-                endIndex   = j
+                endIndex   = currentIndex
 
-    return (
-        startIndex, 
-        endIndex, 
-        maximumSum,
-        iterations
-    )
+            for j in range(currentIndex+1, len(array)) :
+                currentSum += array[j]
+                if (currentSum > maximumSum) :
+                    maximumSum = currentSum
+                    startIndex = currentIndex
+                    endIndex   = j
 
-# Driver method.
-def solve(inputArray:list) -> tuple :
-    return _brute_force(inputArray)
+        return (
+            startIndex, 
+            endIndex, 
+            maximumSum,
+            self.iterations
+        )
+
+    # Driver method.
+    def solve(self, inputArray:list) -> tuple :
+        return self._brute_force(inputArray)
