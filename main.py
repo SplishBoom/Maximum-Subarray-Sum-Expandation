@@ -1,19 +1,14 @@
-from    algorithms  import  ClassBF, ClassDC, ClassKD
-from    utils       import  generateTestArray
-from    utils       import  safeStart, safeStop
-import matplotlib.pyplot    as plt
-import pandas               as pd
-import argparse
-import keyboard
-import colorama
-import timeit
-import json
-import os
-
-"""
-TODO :
-    1-) The iterations count dictionaries are always returning the same input fix it ASAP!
-"""
+from    Constants           import  RUN_runConfigFilePath, DATA_dataOutputFolderPath, connect_pathes
+from    Algorithms          import  ClassBF, ClassDC, ClassKD
+from    Utilities           import  safeStart, safeStop
+from    Utilities           import  generateTestArray
+import  matplotlib.pyplot   as plt
+import  pandas              as pd
+import  argparse
+import  keyboard
+import  colorama
+import  timeit
+import  json
 
 def execute(N:int) -> dict :
 
@@ -66,20 +61,46 @@ def execute(N:int) -> dict :
 
     return results
 
+def progressBar(iterable, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iterable    - Required  : iterable object (Iterable)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    total = len(iterable)
+    # Progress Bar Printing Function
+    def printProgressBar (iteration):
+        percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+        filledLength = int(length * iteration // total)
+        bar = fill * filledLength + '-' * (length - filledLength)
+        print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Initial Call
+    printProgressBar(0)
+    # Update Progress Bar
+    for i, item in enumerate(iterable):
+        yield item
+        printProgressBar(i + 1)
+    # Print New Line on Complete
+    print()
 
 def simulate(N:int, continuously_generate) :
-
-    stopperKeys = ["ESC", "C"]
 
     data = []
 
     if not continuously_generate :
         data.append(execute(N))
     else :
-        for n in range(1, N + 1) :
-            print("[\"{}\"+\"{}\"] to stop generation. || Generating test case by {}/{} ".format(str(stopperKeys[0]), str(stopperKeys[1]), str(n), str(N)))
+        print()
+        iterable = [i for i in range(1, N+1)]
+        for n in progressBar(iterable, prefix = 'Progress:', suffix = 'Complete', length = 50) : 
             data.append(execute(n))
-            if keyboard.is_pressed("ESC") and keyboard.is_pressed("C") :
+            if keyboard.is_pressed("ESC") and keyboard.is_pressed("C") and keyboard.is_pressed("L") and keyboard.is_pressed("S") :
                 print("User stopped generating test cases. Program will now continue by results.")
                 break
 
@@ -90,7 +111,7 @@ def saveToFile(data, fileName, save_to_file:bool) -> str :
     if not save_to_file :
         return "User didn't want to save results to file. For -> \"{}\"".format(fileName)
 
-    path = os.path.abspath(os.path.join("data-export", fileName))
+    path = connect_pathes(DATA_dataOutputFolderPath, fileName)
 
     dataFrameColumns = ["Algorithm", "Array Size", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration"]
 
@@ -111,8 +132,8 @@ def plotResults(data, fileName1, fileName2, plot_results:bool) -> str :
     if not plot_results :
         return "User didn't want to plot results. For -> \"{}\" & \"{}\"".format(fileName1, fileName2)
 
-    path1 = os.path.abspath(os.path.join("data-export", fileName1))
-    path2 = os.path.abspath(os.path.join("data-export", fileName2))
+    path1 = connect_pathes(DATA_dataOutputFolderPath, fileName1)
+    path2 = connect_pathes(DATA_dataOutputFolderPath, fileName2)
 
     # matplotlib plot for timeXsize
     plt.figure(figsize=(10, 5))
@@ -173,7 +194,6 @@ def printResult(result) :
 
     print()
 
-
 def main(N:int, continuously_generate:bool, save_to_file:bool, plot_results:bool) -> None :
     
     data = simulate(N, continuously_generate)
@@ -188,7 +208,7 @@ def main(N:int, continuously_generate:bool, save_to_file:bool, plot_results:bool
 
 # Client Driver        
 if __name__ == "__main__":
-
+    
     safeStart()
 
     parser = argparse.ArgumentParser(description="This script is used to compare the performance of the brute force, divide and conquer and Kadane's algorithms.")
@@ -203,14 +223,13 @@ if __name__ == "__main__":
     save_to_file            = bool(args.save_to_file)
     plot_results            = bool(args.plot_results)
 
-    configPath = os.path.abspath(os.path.join("utils", "run_config.json"))
     if N == None :
-        with open(configPath, "r") as configFile :
+        with open(RUN_runConfigFilePath, "r") as configFile :
             config = json.load(configFile)
-        N                       = config["N"]
-        continuously_generate   = config["continuously_generate"]
-        save_to_file            = config["save_to_file"]
-        plot_results            = config["plot_results"]
+        N                       = config["numberOfElements"]
+        continuously_generate   = config["isContinuouslyGenerated"]
+        save_to_file            = config["willSaveData"]
+        plot_results            = config["willPlotData"]
 
     main(N, continuously_generate, save_to_file, plot_results)
 
