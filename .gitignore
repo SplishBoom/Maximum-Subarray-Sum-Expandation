@@ -6,7 +6,9 @@ __pycache__/
 # Data Export folder
 Data Export/
 
-
+# config files
+*.cfg
+*.json
 
 # C extensions
 *.so
