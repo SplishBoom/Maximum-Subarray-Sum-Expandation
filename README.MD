@@ -18,7 +18,7 @@ install requirements for python packages, then run one of the following python s
 
 # See images for sample output.
 
-![Al text](Assets/MD_ASSETS/mainmenu.png)
-![Alt text](Assets/MD_ASSETS/settings\\menu.png?raw=true)
-![Alt text](Assets/MD_ASSETS/experiment\\menu\\1.png?raw=true)
-![Alt text](Assets/MD_ASSETS/experiment\\menu\\2.png?raw=true)
+![Main Menu](Assets/MD_ASSETS/mainmenu.png)
+![Settings Menu](Assets/MD_ASSETS/settings\\menu.png)
+![Canvas](Assets/MD_ASSETS/experiment\\menu\\1.png)
+![Experiment](Assets/MD_ASSETS/experiment\\menu\\2.png)
