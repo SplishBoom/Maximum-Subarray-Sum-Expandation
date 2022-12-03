@@ -203,6 +203,8 @@ class GUI(tk.Tk) :
 
     def screenShot(self, filename) :
 
+        self.update()
+
         path = connect_pathes(DATA_dataOutputFolderPath, filename+".png")
 
         x = self.winfo_rootx()
@@ -425,6 +427,7 @@ class Settings(ttk.Frame) :
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
+        self.parent = parent
 
         style = ttk.Style()
 
@@ -437,17 +440,17 @@ class Settings(ttk.Frame) :
         style = ttk.Style()
         style.configure("TCheckbutton", background="pink", foreground="white", activebackground="black", activeforeground="white", selectcolor="black", font=50, justify="center", anchor="center")
 
-        numberOfElementsLabel = ttk.Label(parent, text=" Number of elements ", font=("Helvetica", 13), background="light blue", foreground="black")
-        numberOfElementsSpin = tk.Spinbox(parent, from_=1, to=1000000, textvariable=root.numberOfElements, width=20, command=root.updateVariables, font=("Helvetica", 14, "bold"), justify="center", bg="pink", fg="black")
+        numberOfElementsLabel = ttk.Label(self.parent, text=" Number of elements ", font=("Helvetica", 13), background="light blue", foreground="black")
+        numberOfElementsSpin = tk.Spinbox(self.parent, from_=1, to=1000000, textvariable=root.numberOfElements, width=20, command=root.updateVariables, font=("Helvetica", 14, "bold"), justify="center", bg="pink", fg="black")
 
-        isContinuouslyGeneratedLabel = ttk.Label(parent, text=" Continuously Generate ", font=("Helvetica", 13), background="light blue", foreground="black")
-        isContinuouslyGeneratedCheckButton = ttk.Checkbutton(parent, variable=root.isContinuouslyGenerated, onvalue=True, offvalue=False, command=root.updateVariables)
+        isContinuouslyGeneratedLabel = ttk.Label(self.parent, text=" Continuously Generate ", font=("Helvetica", 13), background="light blue", foreground="black")
+        isContinuouslyGeneratedCheckButton = ttk.Checkbutton(self.parent, variable=root.isContinuouslyGenerated, onvalue=True, offvalue=False, command=root.updateVariables)
 
-        willSaveDataLabel = ttk.Label(parent, text=" Save Data ", font=("Helvetica", 13), background="light blue", foreground="black")
-        willSaveDataCheckButton = ttk.Checkbutton(parent, variable=root.willSaveData, onvalue=True, offvalue=False, command=root.updateVariables)
+        willSaveDataLabel = ttk.Label(self.parent, text=" Save Data ", font=("Helvetica", 13), background="light blue", foreground="black")
+        willSaveDataCheckButton = ttk.Checkbutton(self.parent, variable=root.willSaveData, onvalue=True, offvalue=False, command=root.updateVariables)
 
-        willPlotDataLabel = ttk.Label(parent, text=" Plot Data ", font=("Helvetica", 13), background="light blue", foreground="black")
-        willPlotDataCheckButton = ttk.Checkbutton(parent, variable=root.willPlotData, onvalue=True, offvalue=False, command=root.updateVariables)
+        willPlotDataLabel = ttk.Label(self.parent, text=" Plot Data ", font=("Helvetica", 13), background="light blue", foreground="black")
+        willPlotDataCheckButton = ttk.Checkbutton(self.parent, variable=root.willPlotData, onvalue=True, offvalue=False, command=root.updateVariables)
 
         yrelyStart = 0.100
         yrelyEnhancement = 0.16
