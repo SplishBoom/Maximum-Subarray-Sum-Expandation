@@ -5,7 +5,7 @@ This project is a simple implementation of the Max SubArray problem. To analyze 
 
 * 1. Brute Force
 * 2. Divide and Conquer
-* 3. Linear
+* 3. Kadane's Algorithm
 
 The project also includes a simple test suite to test the algorithms.
 
