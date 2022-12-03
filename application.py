@@ -216,6 +216,8 @@ class GUI(tk.Tk) :
 
     def _exit(self, *kwargs) :
 
+        self.update()
+
         if self.frameMode == "Experiment" :
             path = self.screenShot((self.experimentID.get() or "NO INFO") + " EXIT SHOT")
 
@@ -226,6 +228,8 @@ class GUI(tk.Tk) :
         safeStop()
 
     def _restart(self, *kwargs) :
+
+        self.update()
         
         print("Last screen shot of the program is saved in the \"Data Export\" folder.")
         
@@ -621,9 +625,9 @@ class Experiment(ttk.Frame) :
             # for now, iterationCount = 10, expectedIteration = 10
             iterationCount = 10
             expectedIteration = 10
-            self.canvas.create_text(870+x_shifter, 210+0.5*113.333, text="Iteration Count\n{}\nExpected Count\n{}".format(iterationCount, expectedIteration), font=_use[0], fill=_use[1], justify="center")
-            self.canvas.create_text(870+x_shifter, 210+1.5*113.333, text="Iteration Count\n{}\nExpected Count\n{}".format(iterationCount, expectedIteration), font=_use[0], fill=_use[1], justify="center")
-            self.canvas.create_text(870+x_shifter, 210+2.5*113.333, text="Iteration Count\n{}\nExpected Count\n{}".format(iterationCount, expectedIteration), font=_use[0], fill=_use[1], justify="center")
+            self.canvas.create_text(870+x_shifter, 210+0.5*113.333, text="Iteration Count\n{}\nExpected Count\n{}".format(max(result["BF Iterations"].values()), result["BF Expected Iterations"]), font=_use[0], fill=_use[1], justify="center")
+            self.canvas.create_text(870+x_shifter, 210+1.5*113.333, text="Iteration Count\n{}\nExpected Count\n{}".format(max(result["DC Iterations"].values()), result["DC Expected Iterations"]), font=_use[0], fill=_use[1], justify="center")
+            self.canvas.create_text(870+x_shifter, 210+2.5*113.333, text="Iteration Count\n{}\nExpected Count\n{}".format(max(result["KD Iterations"].values()), result["KD Expected Iterations"]), font=_use[0], fill=_use[1], justify="center")
 
             _use = (("Consolas", 13, "bold"), _clr)
             self.canvas.create_text(35, 35, text=">>>", font=_use[0], fill=_use[1])

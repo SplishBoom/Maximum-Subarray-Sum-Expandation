@@ -28,6 +28,16 @@ class ClassKadane :
             "C":0,
             "D":0,
             "E":0,
+            "F":0,
+            "G":0,
+            "H":0,
+            "I":0,
+            "J":0,
+            "K":0,
+            "L":0,
+            "M":0,
+            "N":0,
+            "O":0
         }
 
     # Method that implements Kadane's algorithm.
@@ -35,22 +45,26 @@ class ClassKadane :
     # @return tuple: The tuple that contains the start index, end index and the sum of the subarray with the largest sum.
     def _kadane(self, array:list) -> tuple :
 
-        currentMaxSum = 0
-        maximumSum    = -inf
-        startTrack    = 0
-        startIndex    = 0
-        endIndex      = 0
+        currentMaxSum = 0                               ; self.iterations["A"] += 1
+        maximumSum    = -inf                            ; self.iterations["B"] += 1
+        startTrack    = 0                               ; self.iterations["C"] += 1
+        startIndex    = 0                               ; self.iterations["D"] += 1
+        endIndex      = 0                               ; self.iterations["E"] += 1
 
         for currentIndex in range(len(array)) :
-            currentMaxSum += array[currentIndex]
+            pass                                        ; self.iterations["F"] += 1
+            currentMaxSum += array[currentIndex]        ; self.iterations["G"] += 1
             if (maximumSum < currentMaxSum) :
-                maximumSum = currentMaxSum
-                startIndex = startTrack
-                endIndex = currentIndex
+                pass                                    ; self.iterations["H"] += 1
+                maximumSum = currentMaxSum              ; self.iterations["I"] += 1
+                startIndex = startTrack                 ; self.iterations["J"] += 1
+                endIndex = currentIndex                 ; self.iterations["K"] += 1
             if (currentMaxSum < 0) :
-                currentMaxSum = 0
-                startTrack = currentIndex + 1
+                pass                                    ; self.iterations["L"] += 1
+                currentMaxSum = 0                       ; self.iterations["M"] += 1
+                startTrack = currentIndex + 1           ; self.iterations["N"] += 1
 
+        pass                                            ; self.iterations["O"] += 1
         return (
             startIndex,
             endIndex,
