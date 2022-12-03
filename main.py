@@ -2,6 +2,7 @@ from    Constants           import  RUN_runConfigFilePath, DATA_dataOutputFolder
 from    Algorithms          import  ClassBF, ClassDC, ClassKD
 from    Utilities           import  safeStart, safeStop
 from    Utilities           import  generateTestArray
+from    math                import  log10
 import  matplotlib.pyplot   as plt
 import  pandas              as pd
 import  argparse
@@ -12,6 +13,8 @@ import  json
 
 def execute(N:int) -> dict :
 
+    expectedIterations = lambda N, type : (N*N if type=="BF" else (N*log10(N) if type=="DC" else N))
+    
     testArray = generateTestArray(N)
 
     bfObject = ClassBF()
@@ -45,18 +48,21 @@ def execute(N:int) -> dict :
         "BF Sum" : BFResult[2],
         "BF Time" : BFTime,
         "BF Iterations" : BFResult[3],
+        "BF Expected Iterations" : expectedIterations(N, "BF"),
 
         "DC Start Index" : DCResult[0],
         "DC End Index" : DCResult[1],
         "DC Sum" : DCResult[2],
         "DC Time" : DCtime,
         "DC Iterations" : DCResult[3],
+        "DC Expected Iterations" : expectedIterations(N, "DC"),
 
         "KD Start Index" : KDResult[0],
         "KD End Index" : KDResult[1],
         "KD Sum" : KDResult[2],
         "KD Time" : KDtime,
-        "KD Iterations" : KDResult[3]
+        "KD Iterations" : KDResult[3],
+        "KD Expected Iterations" : expectedIterations(N, "KD"),
     }
 
     return results
@@ -113,14 +119,14 @@ def saveToFile(data, fileName, save_to_file:bool) -> str :
 
     path = connect_pathes(DATA_dataOutputFolderPath, fileName)
 
-    dataFrameColumns = ["Algorithm", "Array Size", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration"]
+    dataFrameColumns = ["Algorithm", "Array Size", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration", "Expected Iteration"]
 
     dataFrame = pd.DataFrame(columns=dataFrameColumns)
 
     for result in data :
-        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Brute Force", result["Array Size"], "O(n^2)", result["BF Start Index"], result["BF End Index"], result["BF Sum"], result["BF Time"], result["BF Iterations"], max(result["BF Iterations"].values())]], columns=dataFrameColumns)])
-        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Divide and Conquer", result["Array Size"], "O(nlogn)", result["DC Start Index"], result["DC End Index"], result["DC Sum"], result["DC Time"], result["DC Iterations"], max(result["DC Iterations"].values())]], columns=dataFrameColumns)])
-        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Kadane", result["Array Size"], "O(n)", result["KD Start Index"], result["KD End Index"], result["KD Sum"], result["KD Time"], result["KD Iterations"], max(result["KD Iterations"].values())]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Brute Force", result["Array Size"], "O(n^2)", result["BF Start Index"], result["BF End Index"], result["BF Sum"], result["BF Time"], result["BF Iterations"], max(result["BF Iterations"].values()), result["BF Expected Iterations"]]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Divide and Conquer", result["Array Size"], "O(nlog(n))", result["DC Start Index"], result["DC End Index"], result["DC Sum"], result["DC Time"], result["DC Iterations"], max(result["DC Iterations"].values()), result["DC Expected Iterations"]]], columns=dataFrameColumns)])
+        dataFrame = pd.concat([dataFrame, pd.DataFrame([["Kadane's Algorithm", result["Array Size"], "O(n)", result["KD Start Index"], result["KD End Index"], result["KD Sum"], result["KD Time"], result["KD Iterations"], max(result["KD Iterations"].values()), result["KD Expected Iterations"]]], columns=dataFrameColumns)])
 
     dataFrame.to_excel(path, index=False)
 
@@ -171,11 +177,11 @@ def printResult(result) :
     infoString1 = "The given array's size is {}. -> [{}, {}, {}, . . . {}]".format(str(result["Array Size"]), str(result["Test Array"][0]), str(result["Test Array"][1]), str(result["Test Array"][2]), str(result["Test Array"][-1]))
     infoString2 = "The maximum subarray is between the indices {} and {} with a sum of {}.".format(str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]))
 
-    tableString = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed", "Iterations", "Maximum Iteration")
+    tableString = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed", "Iterations", "Maximum Iteration", "Expected Iteration")
 
-    resultString1 = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Brute Force", "O(n^2)", str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]), str(result["BF Time"]), str(result["BF Iterations"]), str(max(result["BF Iterations"].values())))
-    resultString2 = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Divide and Conquer", "O(nlogn)", str(result["DC Start Index"]), str(result["DC End Index"]), str(result["DC Sum"]), str(result["DC Time"]), str(result["DC Iterations"]), str(max(result["DC Iterations"].values())))
-    resultString3 = "|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|{:^30}|".format("Kadane's Algorithm", "O(n)", str(result["KD Start Index"]), str(result["KD End Index"]), str(result["KD Sum"]), str(result["KD Time"]), str(result["KD Iterations"]), str(max(result["KD Iterations"].values())))
+    resultString1 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Brute Force", "O(n^2)", str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]), str(result["BF Time"]), str(result["BF Iterations"]), str(max(result["BF Iterations"].values())), str(result["BF Expected Iterations"]))
+    resultString2 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Divide and Conquer", "O(nlog(n))", str(result["DC Start Index"]), str(result["DC End Index"]), str(result["DC Sum"]), str(result["DC Time"]), str(result["DC Iterations"]), str(max(result["DC Iterations"].values())), str(result["DC Expected Iterations"]))
+    resultString3 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Kadane's Algorithm", "O(n)", str(result["KD Start Index"]), str(result["KD End Index"]), str(result["KD Sum"]), str(result["KD Time"]), str(result["KD Iterations"]), str(max(result["KD Iterations"].values())), str(result["KD Expected Iterations"]))
 
     maxLength = max(len(infoString1), len(infoString2), len(tableString), len(resultString1), len(resultString2), len(resultString3))
 

@@ -4,10 +4,11 @@ from    matplotlib.figure       import Figure
 from    Algorithms              import  ClassBF, ClassDC, ClassKD
 from    Utilities               import  safeStart, safeStop
 from    Utilities               import  generateTestArray
-from    tkinter                 import  ttk
-from    tkinter                 import  PhotoImage
 from    PIL                     import  Image, ImageTk
+from    tkinter                 import  PhotoImage
+from    math                    import  log10
 from    pyscreenshot            import  grab
+from    tkinter                 import  ttk
 import  tkinter                 as      tk
 import  pandas                  as      pd
 import  matplotlib
@@ -54,6 +55,8 @@ def progressBar(iterable, prefix = '', suffix = '', decimals = 1, length = 100, 
 
 def execute(N:int) -> dict :
 
+    expectedIterations = lambda N, type : (N*N if type=="BF" else (N*log10(N) if type=="DC" else N))
+    
     testArray = generateTestArray(N)
 
     bfObject = ClassBF()
@@ -87,18 +90,21 @@ def execute(N:int) -> dict :
         "BF Sum" : BFResult[2],
         "BF Time" : BFTime,
         "BF Iterations" : BFResult[3],
+        "BF Expected Iterations" : expectedIterations(N, "BF"),
 
         "DC Start Index" : DCResult[0],
         "DC End Index" : DCResult[1],
         "DC Sum" : DCResult[2],
         "DC Time" : DCtime,
         "DC Iterations" : DCResult[3],
+        "DC Expected Iterations" : expectedIterations(N, "DC"),
 
         "KD Start Index" : KDResult[0],
         "KD End Index" : KDResult[1],
         "KD Sum" : KDResult[2],
         "KD Time" : KDtime,
-        "KD Iterations" : KDResult[3]
+        "KD Iterations" : KDResult[3],
+        "KD Expected Iterations" : expectedIterations(N, "KD"),
     }
 
     return results
@@ -495,14 +501,14 @@ class Experiment(ttk.Frame) :
 
         data = self.root.data
 
-        dataFrameColumns = ["Algorithm", "Array Size", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration"]
+        dataFrameColumns = ["Algorithm", "Array Size", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed (microseconds)", "Iteration List", "Maximum Iteration", "Expected Iteration"]
 
         dataFrame = pd.DataFrame(columns=dataFrameColumns)
 
         for result in data :
-            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Brute Force", result["Array Size"], "O(n^2)", result["BF Start Index"], result["BF End Index"], result["BF Sum"], result["BF Time"], result["BF Iterations"], max(result["BF Iterations"].values())]], columns=dataFrameColumns)])
-            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Divide and Conquer", result["Array Size"], "O(nlogn)", result["DC Start Index"], result["DC End Index"], result["DC Sum"], result["DC Time"], result["DC Iterations"], max(result["DC Iterations"].values())]], columns=dataFrameColumns)])
-            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Kadane", result["Array Size"], "O(n)", result["KD Start Index"], result["KD End Index"], result["KD Sum"], result["KD Time"], result["KD Iterations"], max(result["KD Iterations"].values())]], columns=dataFrameColumns)])
+            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Brute Force", result["Array Size"], "O(n^2)", result["BF Start Index"], result["BF End Index"], result["BF Sum"], result["BF Time"], result["BF Iterations"], max(result["BF Iterations"].values()), result["BF Expected Iterations"]]], columns=dataFrameColumns)])
+            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Divide and Conquer", result["Array Size"], "O(nlog(n))", result["DC Start Index"], result["DC End Index"], result["DC Sum"], result["DC Time"], result["DC Iterations"], max(result["DC Iterations"].values()), result["DC Expected Iterations"]]], columns=dataFrameColumns)])
+            dataFrame = pd.concat([dataFrame, pd.DataFrame([["Kadane's Algorithm", result["Array Size"], "O(n)", result["KD Start Index"], result["KD End Index"], result["KD Sum"], result["KD Time"], result["KD Iterations"], max(result["KD Iterations"].values()), result["KD Expected Iterations"]]], columns=dataFrameColumns)])
 
         dataFrame.to_excel(path, index=False)
 
