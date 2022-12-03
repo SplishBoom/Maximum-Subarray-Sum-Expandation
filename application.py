@@ -24,7 +24,7 @@ from    Utilities               import  safeStart, safeStop
 from    Utilities               import  generateTestArray
 from    PIL                     import  Image, ImageTk
 from    tkinter                 import  PhotoImage
-from    math                    import  log10
+from    math                    import  log2
 from    pyscreenshot            import  grab
 from    tkinter                 import  ttk
 import  tkinter                 as      tk
@@ -63,7 +63,7 @@ def progressBar(iterable, prefix = '', suffix = '', decimals = 1, length = 100, 
 
 def execute(N:int) -> dict :
 
-    expectedIterations = lambda N, type : (N*N if type=="BF" else (N*log10(N) if type=="DC" else N))
+    expectedIterations = lambda N, type : (N*N if type=="BF" else (N*log2(N) if type=="DC" else N))
     
     testArray = generateTestArray(N)
 

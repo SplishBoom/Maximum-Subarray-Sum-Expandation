@@ -20,7 +20,7 @@ from    Constants           import  RUN_runConfigFilePath, DATA_dataOutputFolder
 from    Algorithms          import  ClassBF, ClassDC, ClassKD
 from    Utilities           import  safeStart, safeStop
 from    Utilities           import  generateTestArray
-from    math                import  log10
+from    math                import  log2
 import  matplotlib.pyplot   as plt
 import  pandas              as pd
 import  argparse
@@ -38,7 +38,7 @@ def execute(N:int) -> dict :
         results   -   The results of the simulation (dict)
     """
 
-    expectedIterations = lambda N, type : (N*N if type=="BF" else (N*log10(N) if type=="DC" else N))
+    expectedIterations = lambda N, type : (N*N if type=="BF" else (N*log2(N) if type=="DC" else N))
     
     testArray = generateTestArray(N)
 
@@ -233,7 +233,7 @@ def printResult(result) :
     else :
         print(colorama.Fore.GREEN + "{:^240}".format("Simulation success. Results are equal.") + colorama.Fore.RESET)
 
-    infoString1 = "The given array's size is {}. -> [{}, {}, {}, . . . {}]".format(str(result["Array Size"]), str(result["Test Array"][0]), str(result["Test Array"][1]), str(result["Test Array"][2]), str(result["Test Array"][-1]))
+    infoString1 = "The given array's size is {}.]".format(str(result["Array Size"]))
     infoString2 = "The maximum subarray is between the indices {} and {} with a sum of {}.".format(str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]))
 
     tableString = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed", "Iterations", "Maximum Iteration", "Expected Iteration")

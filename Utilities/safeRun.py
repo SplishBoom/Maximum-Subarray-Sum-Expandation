@@ -23,7 +23,7 @@ def safeStop(willCleanDataOutputFolder=False) :
 
     projectDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    foldersCleanCache = []#["Algorithms", "Utilities", "Constants"]
+    foldersCleanCache = ["Algorithms", "Utilities", "Constants"]
 
     for folder in foldersCleanCache :
         folderPath = os.path.join(projectDir, folder)
