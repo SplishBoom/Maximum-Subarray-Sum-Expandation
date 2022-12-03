@@ -1,3 +1,7 @@
+"""
+This script controlls the execution flow's end and start chraacteristics.
+"""
+
 import os
 import shutil
 
@@ -15,17 +19,22 @@ def safeStart() :
                 with open(path, "w") as f :
                     f.write("")
 
-def safeStop() :
+def safeStop(willCleanDataOutputFolder=False) :
 
     projectDir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    folders = ["Algorithms", "Utilities", "Constants"]
+    foldersCleanCache = []#["Algorithms", "Utilities", "Constants"]
 
-    for folder in folders :
+    for folder in foldersCleanCache :
         folderPath = os.path.join(projectDir, folder)
         for root, dirs, files in os.walk(folderPath):
             for dir in dirs :
                 if dir == "__pycache__" :
                     shutil.rmtree(os.path.join(root, dir))
+
+    if willCleanDataOutputFolder :
+        for root, dirs, files in os.walk(DATA_dataOutputFolderPath):
+            for file in files :
+                os.remove(os.path.join(root, file))
 
     exit()

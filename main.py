@@ -1,3 +1,21 @@
+"""
+@Script, that implements an simulation environment for algorithm analysis.
+
+@Owns: "Emir Cetin Memis" & "Emircan Yaprak"
+@Contiributors: "Emir Cetin Memis" & "Emircan Yaprak"
+
+@Student_1:     "Emir Cetin Memis"    |   @Student_2:     "Emircan Yaprak"
+@StudentID_1:   041901027             |   @StudentID_2:   041901009
+@Contact_1:     "memise@mef.edu.tr"   |   @Contact_2:     "yaprakem@mef.edu.tr"
+
+@Set&Rights: "MEF University"
+@Instructor: "Prof. Dr. Muhittin Gokmen"
+@Course:     "Analysis of Algorithms"
+@Req:        "Project 1"
+
+@Since: 11/27/2022
+"""
+
 from    Constants           import  RUN_runConfigFilePath, DATA_dataOutputFolderPath, connect_pathes
 from    Algorithms          import  ClassBF, ClassDC, ClassKD
 from    Utilities           import  safeStart, safeStop
@@ -12,6 +30,13 @@ import  timeit
 import  json
 
 def execute(N:int) -> dict :
+    """
+    Method that executes the algorithms for given array size @N.
+    @params :
+        N   - Required  : The size of the array (int)
+    @return :
+        results   -   The results of the simulation (dict)
+    """
 
     expectedIterations = lambda N, type : (N*N if type=="BF" else (N*log10(N) if type=="DC" else N))
     
@@ -96,6 +121,14 @@ def progressBar(iterable, prefix = '', suffix = '', decimals = 1, length = 100, 
     print()
 
 def simulate(N:int, continuously_generate) :
+    """
+    Method that simulates the algorithms for given array size @N according to the @continuously_generate parameter.
+    @params :
+        N                       - Required  : The size of the array (int)
+        continuously_generate   - Required  : If True, the program will generate arrays from 1 to size @N (bool)
+    @return :
+        data    -   The results of the simulation (list)
+    """
 
     data = []
 
@@ -113,7 +146,16 @@ def simulate(N:int, continuously_generate) :
     return data
     
 def saveToFile(data, fileName, save_to_file:bool) -> str :
-    
+    """
+    Method that saves all data into and xlsx file.
+    @params :
+        data            - Required  : data to be saved (List)
+        fileName        - Required  : name of the file (Str)
+        save_to_file    - Required  : if true then save to file (Bool)
+    @return :
+        filePath    - path of the file (Str)
+    """
+
     if not save_to_file :
         return "User didn't want to save results to file. For -> \"{}\"".format(fileName)
 
@@ -132,9 +174,18 @@ def saveToFile(data, fileName, save_to_file:bool) -> str :
 
     return "Results saved to file. For -> \"{}\"".format(path)
 
-
 def plotResults(data, fileName1, fileName2, plot_results:bool) -> str :
-    
+    """
+    Method that uses matplotlib library to plot a given result's results.
+    @params :
+        data            - Required  : data to plot (List)
+        fileName1       - Required  : name of the file to save the plot (Str)
+        fileName2       - Required  : name of the file to save the plot (Str)
+        plot_results    - Required  : if user wants to plot results (Bool)
+    @returns :
+        str             - message to user (Str) 
+    """
+
     if not plot_results :
         return "User didn't want to plot results. For -> \"{}\" & \"{}\"".format(fileName1, fileName2)
 
@@ -168,6 +219,14 @@ def plotResults(data, fileName1, fileName2, plot_results:bool) -> str :
     return "Results plotted. For -> \"{}\" & \"{}\"".format(path1, path2)
 
 def printResult(result) :
+    """
+    Method that accepts and result dictionary, and prints it in a nice format.
+    @params :
+        result  - Required  : result dictionary (Dict)
+    @returns :
+        None
+    """
+    
 
     if not result["Simulate Correct"] :
         print(colorama.Fore.RED + "\nSimulation failed. Results are not equal." + colorama.Fore.RESET)
@@ -201,7 +260,18 @@ def printResult(result) :
     print()
 
 def main(N:int, continuously_generate:bool, save_to_file:bool, plot_results:bool) -> None :
-    
+    """
+    Main function of the program. It drives through the program according to gien parameters.
+    @params :
+        N                       - Required  : The size of the array (int)
+        continuously_generate   - Required  : If True, the program will generate arrays from 1 to size @N (bool)
+        save_to_file            - Required  : If True, the program will save the results to a file (bool)
+        plot_results            - Required  : If True, the program will plot the results (bool)
+    @return :
+        None
+    """
+
+
     data = simulate(N, continuously_generate)
 
     feedback1 = saveToFile(data, "results.xlsx", save_to_file)
@@ -215,7 +285,7 @@ def main(N:int, continuously_generate:bool, save_to_file:bool, plot_results:bool
 # Client Driver        
 if __name__ == "__main__":
     
-    safeStart()
+    safeStart() # Read from Utilities/safeRun.py
 
     parser = argparse.ArgumentParser(description="This script is used to compare the performance of the brute force, divide and conquer and Kadane's algorithms.")
     parser.add_argument("-n", "--number-of-elements", type=int, help="The number of elements in the array.", required=False)
@@ -229,6 +299,7 @@ if __name__ == "__main__":
     save_to_file            = bool(args.save_to_file)
     plot_results            = bool(args.plot_results)
 
+    # To automatically start without passing arguments.
     if N == None :
         with open(RUN_runConfigFilePath, "r") as configFile :
             config = json.load(configFile)
@@ -237,6 +308,6 @@ if __name__ == "__main__":
         save_to_file            = config["willSaveData"]
         plot_results            = config["willPlotData"]
 
-    main(N, continuously_generate, save_to_file, plot_results)
+    main(N, continuously_generate, save_to_file, plot_results) # Driver call
 
-    safeStop()
+    safeStop() # Read from Utilities/safeRun.py

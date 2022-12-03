@@ -1,3 +1,7 @@
+"""
+This script is used to track the pathes of the vars that are used in project.
+"""
+
 import os
 
 def connect_pathes(*pathes):

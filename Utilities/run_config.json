@@ -1,6 +1,6 @@
 {
     "isContinuouslyGenerated": true,
     "numberOfElements": 1000,
-    "willPlotData": true,
-    "willSaveData": true
+    "willPlotData": false,
+    "willSaveData": false
 }
