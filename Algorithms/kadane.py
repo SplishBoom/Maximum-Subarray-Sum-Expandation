@@ -4,9 +4,9 @@
 @Owns: "Prof. Joseph Born Kadane"
 @Contiributor: "Devesh Agrawal" & "Emir Cetin Memis" & "Emircan Yaprak" & "Tuana Selen Ozhazday"
 
-@Student_1:     "Emir Cetin Memis"    |   @Student_2:     "Emircan Yaprak"        |   @Student_2:     "Tuana Selen Ozhazday"
-@StudentID_1:   041901027             |   @StudentID_2:   041901009               |   @StudentID_2:   041901024
-@Contact_1:     "memise@mef.edu.tr"   |   @Contact_2:     "yaprakem@mef.edu.tr"   |   @Contact_2:     "ozhazdayt@mef.edu.tr"
+@Student_1:     "Emir Cetin Memis"    |   @Student_2:     "Emircan Yaprak"        |   @Student_3:     "Tuana Selen Ozhazday"
+@StudentID_1:   041901027             |   @StudentID_2:   041901009               |   @StudentID_3:   041901024
+@Contact_1:     "memise@mef.edu.tr"   |   @Contact_2:     "yaprakem@mef.edu.tr"   |   @Contact_3:     "ozhazdayt@mef.edu.tr"
 
 @Set&Rights: "MEF University"
 @Instructor: "Prof. Dr. Muhittin Gokmen"
