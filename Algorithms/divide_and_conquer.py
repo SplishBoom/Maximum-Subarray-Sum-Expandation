@@ -4,9 +4,9 @@
 @Owns: "John von Neumann"
 @Contiributors: "Anand Kumar" & "Emir Cetin Memis"
 
-@Student_1:     "Emir Cetin Memis"    |   @Student_2:     "Emircan Yaprak"
-@StudentID_1:   041901027             |   @StudentID_2:   041901009
-@Contact_1:     "memise@mef.edu.tr"   |   @Contact_2:     "yaprakem@mef.edu.tr"
+@Student_1:     "Emir Cetin Memis"    |   @Student_2:     "Emircan Yaprak"        |   @Student_2:     "Tuana Selen Ozhazday"
+@StudentID_1:   041901027             |   @StudentID_2:   041901009               |   @StudentID_2:   041901024
+@Contact_1:     "memise@mef.edu.tr"   |   @Contact_2:     "yaprakem@mef.edu.tr"   |   @Contact_2:     "ozhazdayt@mef.edu.tr"
 
 @Set&Rights: "MEF University"
 @Instructor: "Prof. Dr. Muhittin Gokmen"
