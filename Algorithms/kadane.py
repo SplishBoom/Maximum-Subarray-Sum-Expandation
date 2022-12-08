@@ -37,7 +37,8 @@ class ClassKadane :
             "L":0,
             "M":0,
             "N":0,
-            "O":0
+            "O":0,
+            "P":0
         }
 
     # Method that implements Kadane's algorithm.
