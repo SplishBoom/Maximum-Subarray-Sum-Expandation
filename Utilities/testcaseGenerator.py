@@ -21,5 +21,6 @@ def generateTestArray(N:int, BORDER:int=100) -> list :
 
     random.shuffle(testArray)
 
+    #return [0, -2, 3, 4, 6, 5].copy() use this when specific array input required.
     return testArray.copy()
 
