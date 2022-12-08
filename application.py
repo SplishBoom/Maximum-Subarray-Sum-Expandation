@@ -36,6 +36,7 @@ import  timeit
 import  json
 
 matplotlib.use("TkAgg")
+#matplotlib.use("agg")
 
 try:
     from ctypes import windll
