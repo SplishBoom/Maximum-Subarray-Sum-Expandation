@@ -13,6 +13,9 @@ The project also includes a simple test suite to test the algorithms.
 
 install requirements for python packages, then run one of the following python scripts:
 
+Note: It is sufficient to have an anaconda environment to run though for that use following.
+* conda create -n msse ; pip install -r requirements.txt ; conda activate msse
+
 1. main.py - runs the test suite and prints the results.
 2. application.py - runs the application and prints the results.
 
