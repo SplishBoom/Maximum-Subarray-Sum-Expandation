@@ -233,7 +233,7 @@ def printResult(result) :
     else :
         print(colorama.Fore.GREEN + "{:^240}".format("Simulation success. Results are equal.") + colorama.Fore.RESET)
 
-    infoString1 = "The given array's size is {}.]".format(str(result["Array Size"]))
+    infoString1 = "The given array's size is {}. -> {}".format(str(result["Array Size"]), (str(result["Test Array"]) if result["Array Size"] <= 20 else "Array is too big to print."))
     infoString2 = "The maximum subarray is between the indices {} and {} with a sum of {}.".format(str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]))
 
     tableString = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed", "Iterations", "Maximum Iteration", "Expected Iteration")
