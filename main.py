@@ -238,9 +238,9 @@ def printResult(result) :
 
     tableString = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Algorithm", "Time Complexity", "SubArray Start Index", "SubArray End Index", "SubArray Sum", "Time Elapsed", "Iterations", "Maximum Iteration", "Expected Iteration")
 
-    resultString1 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Brute Force", "O(n^2)", str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]), str(result["BF Time"]), str(result["BF Iterations"]), str(max(result["BF Iterations"].values())), str(result["BF Expected Iterations"]))
-    resultString2 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Divide and Conquer", "O(nlog(n))", str(result["DC Start Index"]), str(result["DC End Index"]), str(result["DC Sum"]), str(result["DC Time"]), str(result["DC Iterations"]), str(max(result["DC Iterations"].values())), str(result["DC Expected Iterations"]))
-    resultString3 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Kadane's Algorithm", "O(n)", str(result["KD Start Index"]), str(result["KD End Index"]), str(result["KD Sum"]), str(result["KD Time"]), str(result["KD Iterations"]), str(max(result["KD Iterations"].values())), str(result["KD Expected Iterations"]))
+    resultString1 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Brute Force", "O(n^2)", str(result["BF Start Index"]), str(result["BF End Index"]), str(result["BF Sum"]), str(result["BF Time"]), "HIDED", str(max(result["BF Iterations"].values())), str(result["BF Expected Iterations"]))
+    resultString2 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Divide and Conquer", "O(nlog(n))", str(result["DC Start Index"]), str(result["DC End Index"]), str(result["DC Sum"]), str(result["DC Time"]), "HIDED", str(max(result["DC Iterations"].values())), str(result["DC Expected Iterations"]))
+    resultString3 = "|{:^20}|{:^17}|{:^22}|{:^20}|{:^14}|{:^26}|{:^42}|{:^19}|{:^20}|".format("Kadane's Algorithm", "O(n)", str(result["KD Start Index"]), str(result["KD End Index"]), str(result["KD Sum"]), str(result["KD Time"]), "HIDED", str(max(result["KD Iterations"].values())), str(result["KD Expected Iterations"]))
 
     maxLength = max(len(infoString1), len(infoString2), len(tableString), len(resultString1), len(resultString2), len(resultString3))
 
