@@ -3,6 +3,7 @@ This script controlls the execution flow's end and start chraacteristics.
 """
 
 import os
+import json
 import shutil
 
 from Constants import DATA_dataOutputFolderPath, RUN_runConfigFilePath
@@ -18,6 +19,21 @@ def safeStart() :
             else :
                 with open(path, "w") as f :
                     f.write("")
+
+    # Check if 
+    try :
+        with open (RUN_runConfigFilePath, "r") as infile:
+            configFile = json.load(infile)
+        dummy = configFile["numberOfElements"], configFile["isContinuouslyGenerated"], configFile["willSaveData"], configFile["willPlotData"]
+    except :
+        fixData = {
+            "numberOfElements" : 10,
+            "isContinuouslyGenerated" : False,
+            "willSaveData" : True,
+            "willPlotData" : True
+        }
+        with open(RUN_runConfigFilePath, "w") as f:
+            json.dump(fixData, f, sort_keys=True, indent=4)
 
 def safeStop(willCleanDataOutputFolder=False) :
 

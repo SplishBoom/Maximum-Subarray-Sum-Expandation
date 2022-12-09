@@ -242,23 +242,11 @@ class GUI(tk.Tk) :
         self.destroy()
 
     def initialize(self) :
-        try :
-            with open (RUN_runConfigFilePath, "r") as infile:
-                configFile = json.load(infile)
-            settings = (configFile["numberOfElements"], configFile["isContinuouslyGenerated"], configFile["willSaveData"], configFile["willPlotData"])
-        except :
-            fixData = {
-                "numberOfElements" : 10,
-                "isContinuouslyGenerated" : False,
-                "willSaveData" : True,
-                "willPlotData" : True
-            }
-            with open(RUN_runConfigFilePath, "w") as f:
-                json.dump(fixData, f, sort_keys=True, indent=4)
-            with open (RUN_runConfigFilePath, "r") as infile:
-                configFile = json.load(infile)
-            settings = (configFile["numberOfElements"], configFile["isContinuouslyGenerated"], configFile["willSaveData"], configFile["willPlotData"])
-
+        
+        with open (RUN_runConfigFilePath, "r") as infile:
+            configFile = json.load(infile)
+        settings = (configFile["numberOfElements"], configFile["isContinuouslyGenerated"], configFile["willSaveData"], configFile["willPlotData"])
+    
         self.numberOfElements = tk.IntVar(value=settings[0])
         self.isContinuouslyGenerated = tk.BooleanVar(value=settings[1])
         self.willSaveData = tk.BooleanVar(value=settings[2])
